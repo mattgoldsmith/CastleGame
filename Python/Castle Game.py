@@ -45,6 +45,8 @@ Dict_desc["Dungeon"] = "You travel down a spiral stone staircase to a dank and g
 
 #Items
 Items = {"Kitchen":"Cheese","Smithy":"Key","Dungeon":"Door"}
+#Rooms to use items in
+Use_items = {"Smithy":"Cheese","Dungeon":"Key"}
 #Start with an empty bag. Put items in the bag
 Bag = []
 
@@ -125,16 +127,16 @@ while x.lower() != "quit":
         print(st_dir)
     try: 
         print("-----------")
-        x = str(input())
+        x = str(input()).strip()
         #List the item in the room
         if x.lower() == "item":
             print(itemDesc(Current_room))
         #Take the item
-        if x.lower().split()[0] == "take":
+        if x.lower().split()[0].strip() == "take":
             if Items.get(Current_room) != None:
                 if Items.get(Current_room).lower() == x.lower().split()[1]:
                     print("You picked up the " + Items.get(Current_room))
-                    Bag.append(Items.get(Current_room))
+                    Bag.append(Items.get(Current_room).lower())
                     Items.pop(Current_room)
                     print(Bag)
                 else:
@@ -143,15 +145,26 @@ while x.lower() != "quit":
                 print("No useable item in this room")
         #Use item
         if x.lower().split()[0] == "use":
-            if x.lower().split()[1] == "cheese" and Current_room == "Smithy" and "Cheese" in Bag:
-                print("You give the cheese to the mouse. He grabs it and runs off knocking some items from a nearby shelf. You notice a key fell from the shelf.")
-                Bag.remove("Cheese")
-            if x.lower().split()[1] == "key" and Current_room == "Dungeon" and "Key" in Bag:
+            #No item message
+            if x.lower().split()[1].strip() not in Bag:
+                print("You don't have this item")
+            #Check if you are using the item in the correct room
+            inRoom = False
+            for key in Use_items:
+                if Use_items.get(key).lower() == x.lower().split()[1].strip() and key == Current_room:
+                    inRoom = True
+            if inRoom == False and x.lower().split()[1].strip() in Bag:
+                print("This isn't the time to use that!")
+            #TODO Make these two generic
+            #Use the cheese
+            if x.lower().split()[1].strip() == "cheese" and Current_room == "Smithy" and "cheese" in Bag:
+                print("You give the cheese to the mouse. He grabs it and runs off knocking some items from a nearby shelf. You notice a key fall from the shelf.")
+                Bag.remove("cheese")
+            #Use the Key
+            if x.lower().split()[1].strip() == "key" and Current_room == "Dungeon" and "key" in Bag:
                 print("You use the key on the locked door. It swings open, flooding the dungeon with fresh air. You exit the castle through the door, never to set foot inside again.")
                 win()
                 x = "quit"
-            if x.lower().split[1] not in Bag:
-                print("You don't have this item")
         #Move to a new room
         if x.lower() in directions_low:
             print("You went " + str(x))
@@ -159,7 +172,7 @@ while x.lower() != "quit":
             roomDesc(Current_room)
             moved = 1
         #Error/incorrect input
-        elif x.lower().split()[0] not in ["quit","item","take","use"]:
+        elif x.lower().split()[0].strip() not in ["quit","item","take","use"]:
             moved = 0
             print("You did not move a direction")
             if len(directions) > 1:

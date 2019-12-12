@@ -102,6 +102,22 @@ def itemDesc(room):
         return item
     else:
         return "There is nothing of use in this room"
+
+#Use an item (String item, List bag)
+def useItem(item, bag):
+    #Use the Cheese
+    if item == "cheese":
+        print("You give the cheese to the mouse. He grabs it and runs off knocking some items from a nearby shelf. You notice a key fall from the shelf.")
+        bag.remove("cheese")
+        x = ''
+    #Use the Key
+    if item == "key":
+        print("You use the key on the locked door. It swings open, flooding the dungeon with fresh air. You exit the castle through the door, never to set foot inside again.")
+        win()
+        bag.remove("key")
+        x = "quit"
+        
+    return bag, x
     
 #Win text
 def win():
@@ -155,16 +171,13 @@ while x.lower() != "quit":
                     inRoom = True
             if inRoom == False and x.lower().split()[1].strip() in Bag:
                 print("This isn't the time to use that!")
-            #TODO Make these two generic
-            #Use the cheese
-            if x.lower().split()[1].strip() == "cheese" and Current_room == "Smithy" and "cheese" in Bag:
-                print("You give the cheese to the mouse. He grabs it and runs off knocking some items from a nearby shelf. You notice a key fall from the shelf.")
-                Bag.remove("cheese")
-            #Use the Key
-            if x.lower().split()[1].strip() == "key" and Current_room == "Dungeon" and "key" in Bag:
-                print("You use the key on the locked door. It swings open, flooding the dungeon with fresh air. You exit the castle through the door, never to set foot inside again.")
-                win()
-                x = "quit"
+            #Use the item
+            if inRoom == True and x.lower().split()[1].strip() in Bag:
+                xCopy = x
+                Bag, x = useItem(x.lower().split()[1].strip(), Bag)
+                #Check if the returned value is not the exit clause
+                if x == '':
+                    x = xCopy
         #Move to a new room
         if x.lower() in directions_low:
             print("You went " + str(x))

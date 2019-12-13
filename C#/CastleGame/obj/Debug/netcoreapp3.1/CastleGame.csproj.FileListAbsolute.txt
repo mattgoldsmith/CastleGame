@@ -1,0 +1,11 @@
+C:\Users\cofco\OneDrive\Documents\GitHub\CastleGame\C#\CastleGame\bin\Debug\netcoreapp3.1\CastleGame.exe
+C:\Users\cofco\OneDrive\Documents\GitHub\CastleGame\C#\CastleGame\bin\Debug\netcoreapp3.1\CastleGame.deps.json
+C:\Users\cofco\OneDrive\Documents\GitHub\CastleGame\C#\CastleGame\bin\Debug\netcoreapp3.1\CastleGame.runtimeconfig.json
+C:\Users\cofco\OneDrive\Documents\GitHub\CastleGame\C#\CastleGame\bin\Debug\netcoreapp3.1\CastleGame.runtimeconfig.dev.json
+C:\Users\cofco\OneDrive\Documents\GitHub\CastleGame\C#\CastleGame\bin\Debug\netcoreapp3.1\CastleGame.dll
+C:\Users\cofco\OneDrive\Documents\GitHub\CastleGame\C#\CastleGame\bin\Debug\netcoreapp3.1\CastleGame.pdb
+C:\Users\cofco\OneDrive\Documents\GitHub\CastleGame\C#\CastleGame\obj\Debug\netcoreapp3.1\CastleGame.csprojAssemblyReference.cache
+C:\Users\cofco\OneDrive\Documents\GitHub\CastleGame\C#\CastleGame\obj\Debug\netcoreapp3.1\CastleGame.AssemblyInfoInputs.cache
+C:\Users\cofco\OneDrive\Documents\GitHub\CastleGame\C#\CastleGame\obj\Debug\netcoreapp3.1\CastleGame.AssemblyInfo.cs
+C:\Users\cofco\OneDrive\Documents\GitHub\CastleGame\C#\CastleGame\obj\Debug\netcoreapp3.1\CastleGame.dll
+C:\Users\cofco\OneDrive\Documents\GitHub\CastleGame\C#\CastleGame\obj\Debug\netcoreapp3.1\CastleGame.pdb

@@ -31,17 +31,17 @@ namespace CastleGame
             {
                 Console.WriteLine($"You are currently in the {currentRoom}");
                 Console.WriteLine(GetRoomDescription());
-                Console.WriteLine(GetValidDirections());
-                input = Console.ReadLine().ToString().ToLower();
-                if(directions.Contains(input))
+                Console.WriteLine(GetValidDirectionsString());
+                input = Console.ReadLine().ToString().ToLower().Trim();
+                if(GetValidDirections().Contains(input))
                 {
                     Console.WriteLine($"You went {input}");
                     Move(input);
                 }
-                if(input != "quit" && directions.Contains(input) == false)
+                if(input != "quit" && GetValidDirections().Contains(input) == false)
                 {
                     Console.WriteLine($"{input} is not a valid direction");
-                    Console.WriteLine(GetValidDirections());
+                    Console.WriteLine(GetValidDirectionsString());
                 }
                 
             }
@@ -135,7 +135,7 @@ namespace CastleGame
             items.Add(key);
         }
 
-        private string GetValidDirections()
+        private string GetValidDirectionsString()
         {
             string text = "No valid directions";
             foreach (Room room in rooms)
@@ -159,6 +159,24 @@ namespace CastleGame
             }
             //remove the last two characters from string (", ")
             return text[0..^2];
+        }
+
+        private List<string> GetValidDirections()
+        {
+            List<string> directions = new List<string>();
+            foreach (Room room in rooms)
+            {
+                if (currentRoom == room.GetName())
+                {
+                    foreach (KeyValuePair<string, string> entry in room.GetNeighbours())
+                    {
+                        //TODO Add a check for the last entry so the last two characters do not have to be removed later
+                        directions.Add(entry.Key.ToLower());
+                    }
+                }
+            }
+            //remove the last two characters from string (", ")
+            return directions;
         }
 
         private void Move(String direction)

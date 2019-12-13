@@ -8,16 +8,16 @@ namespace CastleGame
     {
         private string name;
         private string description;
-        private Dictionary<string,string> neighbours;
-        public Room(string name, string description, Dictionary<string,string> neighbours)
+        private Dictionary<string, string> neighbours;
+        public Room(string name, string description, Dictionary<string, string> neighbours)
         {
             SetName(name);
             SetDescription(description);
             this.neighbours = new Dictionary<string, string>();
-            setNeighbours(neighbours);
+            SetNeighbours(neighbours);
         }
 
-        private void SetName (string name)
+        private void SetName(string name)
         {
             this.name = name;
         }
@@ -37,12 +37,12 @@ namespace CastleGame
             return this.description;
         }
 
-        private void setNeighbours(Dictionary<string,string> neighbours)
+        private void SetNeighbours(Dictionary<string, string> neighbours)
         {
             this.neighbours = neighbours;
         }
 
-        public Dictionary<string,string> getNeighbours()
+        public Dictionary<string, string> GetNeighbours()
         {
             return this.neighbours;
         }

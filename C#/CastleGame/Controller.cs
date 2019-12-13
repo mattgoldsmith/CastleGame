@@ -7,12 +7,13 @@ namespace CastleGame
     class Controller
     {
         private string input = null;
-        private string currentRoom;
+        private string currentRoom = "Entrance Hall";
         private List<string> roomNames = new List<string>();
         //private List<string> items = new List<string>();
         private List<Room> rooms = new List<Room>();
         private List<Item> items = new List<Item>();
         private List<Item> bag = new List<Item>();
+        private List<string> directions = new List<string>() { { "north" }, { "east" }, { "south" }, { "west" } };
         public Controller()
         {
             CreateRooms();
@@ -20,13 +21,27 @@ namespace CastleGame
             {
                 Console.WriteLine(name);
             }
-            Console.WriteLine("Please enter your name");
+            CreateItems();
+            foreach (Item item in items)
+            {
+                Console.WriteLine($"{item.GetName()}: {item.GetRoom()}");
+            }
+            Console.WriteLine("Please enter your name"); //change to relevant text
             while (input != "quit")
             {
-                input = Console.ReadLine();
-                if(input != "quit")
+                Console.WriteLine($"You are currently in the {currentRoom}");
+                Console.WriteLine(GetRoomDescription());
+                Console.WriteLine(GetValidDirectionsString());
+                input = Console.ReadLine().ToString().ToLower().Trim();
+                if(GetValidDirections().Contains(input))
                 {
-                    Console.WriteLine($"You put: {input}");
+                    Console.WriteLine($"You went {input}");
+                    Move(input);
+                }
+                if(input != "quit" && GetValidDirections().Contains(input) == false)
+                {
+                    Console.WriteLine($"{input} is not a valid direction");
+                    Console.WriteLine(GetValidDirectionsString());
                 }
                 
             }
@@ -109,6 +124,91 @@ namespace CastleGame
             rooms.Add(Smithy);
             rooms.Add(Lookout);
             rooms.Add(Dungeon);
+        }
+
+        private void CreateItems()
+        {
+            Item cheese = new Item("Cheese", "Kitchen");
+            Item key = new Item("Key", "Smithy");
+
+            items.Add(cheese);
+            items.Add(key);
+        }
+
+        private string GetValidDirectionsString()
+        {
+            string text = "No valid directions";
+            foreach (Room room in rooms)
+            {
+                if(currentRoom == room.GetName())
+                {
+                    if (room.GetNeighbours().Count > 1)
+                    {
+                        text = "Available directions are ";
+                    }
+                    else
+                    {
+                        text = "Available direction is ";
+                    }
+                    foreach (KeyValuePair<string, string> entry in room.GetNeighbours())
+                    {
+                        //TODO Add a check for the last entry so the last two characters do not have to be removed later
+                        text += $"{entry.Key}, ";
+                    }
+                }
+            }
+            //remove the last two characters from string (", ")
+            return text[0..^2];
+        }
+
+        private List<string> GetValidDirections()
+        {
+            List<string> directions = new List<string>();
+            foreach (Room room in rooms)
+            {
+                if (currentRoom == room.GetName())
+                {
+                    foreach (KeyValuePair<string, string> entry in room.GetNeighbours())
+                    {
+                        //TODO Add a check for the last entry so the last two characters do not have to be removed later
+                        directions.Add(entry.Key.ToLower());
+                    }
+                }
+            }
+            //remove the last two characters from string (", ")
+            return directions;
+        }
+
+        private void Move(String direction)
+        {
+            foreach (Room room in rooms)
+            {
+                if (currentRoom == room.GetName())
+                {
+                    Console.WriteLine("CurrentRoom");
+                    foreach (KeyValuePair<string, string> entry in room.GetNeighbours())
+                    {
+                        if(direction == entry.Key.ToLower())
+                        {
+                            currentRoom = entry.Value;
+                            Console.WriteLine($"You moved to the {entry.Value}");
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        private string GetRoomDescription()
+        {   string desc = "";
+            foreach (Room room in rooms)
+            {
+                if(room.GetName() == currentRoom)
+                {
+                    desc = room.GetDesciption();
+                }
+            }
+            return desc;
         }
     }
 }

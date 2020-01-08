@@ -13,7 +13,7 @@ namespace CastleGame
         private List<Room> rooms = new List<Room>();
         private List<Item> items = new List<Item>();
         private List<Item> bag = new List<Item>();
-        private List<string> directions = new List<string>() { { "north" }, { "east" }, { "south" }, { "west" } };
+        //private List<string> directions = new List<string>() { { "north" }, { "east" }, { "south" }, { "west" } };
         public Controller()
         {
             CreateRooms();
@@ -27,18 +27,48 @@ namespace CastleGame
                 Console.WriteLine($"{item.GetName()}: {item.GetRoom()}");
             }
             Console.WriteLine("Please enter your name"); //change to relevant text
+            Console.WriteLine($"You are currently in the {currentRoom}");
+            Console.WriteLine(GetRoomDescription());
+            Console.WriteLine(GetValidDirectionsString());
             while (input != "quit")
             {
-                Console.WriteLine($"You are currently in the {currentRoom}");
-                Console.WriteLine(GetRoomDescription());
-                Console.WriteLine(GetValidDirectionsString());
+                Console.WriteLine("-----------");
                 input = Console.ReadLine().ToString().ToLower().Trim();
+                string[] input_words = input.Split(' ');
                 if(GetValidDirections().Contains(input))
                 {
                     Console.WriteLine($"You went {input}");
                     Move(input);
+                    Console.WriteLine($"You are currently in the {currentRoom}");
+                    Console.WriteLine(GetRoomDescription());
+                    Console.WriteLine(GetValidDirectionsString());
                 }
-                if(input != "quit" && GetValidDirections().Contains(input) == false)
+                if(input_words[0] == "take")
+                {
+                    bool itemExists = false;
+                    foreach(Item item in items)
+                    {
+                        if(input_words[1] == item.GetName().ToLower())
+                        {
+                            itemExists = true;
+                            if(item.GetRoom() == currentRoom)
+                            {
+                                Console.WriteLine($"You picked up the {item.GetName()}");
+                                bag.Add(item);
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("That item doesn't exist!");
+                            }
+                        }
+                    }
+                    if(itemExists == false)
+                    {
+                        Console.WriteLine("That item doesn't exist!");
+                    }
+                }
+                if(input != "quit" && GetValidDirections().Contains(input) == false && input_words[0] != "take")
                 {
                     Console.WriteLine($"{input} is not a valid direction");
                     Console.WriteLine(GetValidDirectionsString());
@@ -170,12 +200,10 @@ namespace CastleGame
                 {
                     foreach (KeyValuePair<string, string> entry in room.GetNeighbours())
                     {
-                        //TODO Add a check for the last entry so the last two characters do not have to be removed later
                         directions.Add(entry.Key.ToLower());
                     }
                 }
             }
-            //remove the last two characters from string (", ")
             return directions;
         }
 

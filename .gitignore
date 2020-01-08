@@ -3,6 +3,9 @@
 ################################################################################
 
 /.vs/
-/C\#/.vs/
-/C\#/CastleGame/bin/
-/C\#/CastleGame/obj/
+C#/.vs/
+C#/CastleGame/bin/
+C#/CastleGame/obj/
+C#/.vs/CastleGame/v16/.suo
+C#/.vs/CastleGame/DesignTimeBuild/.dtbcache
+C#/.vs/CastleGame/v16/.suo

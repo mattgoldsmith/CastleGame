@@ -38,10 +38,17 @@ namespace CastleGame
                     Console.WriteLine($"{item.GetName()}: {item.GetRoom()}");
                 }
             }
-            Console.WriteLine("Please enter your name"); //change to relevant text
-                Thread.Sleep(50);
-            Console.WriteLine($"You are currently in the {currentRoom}");
-                Thread.Sleep(50);
+
+            Console.WriteLine("You enter a spooky castle");
+            Console.WriteLine("You can move either North, South, East or West");
+            Console.WriteLine("You must find a key to exit the castle");
+            Console.WriteLine("Enter 'quit' to exit");
+            Console.WriteLine("Please enter a direction to move");
+            Console.WriteLine("-----------");
+            //Console.WriteLine("Please enter your name"); //change to relevant text
+            Thread.Sleep(50);
+            //Console.WriteLine($"You are currently in the {currentRoom}");
+            //    Thread.Sleep(50);
             Console.WriteLine(GetRoomDescription());
                 Thread.Sleep(50);
             Console.WriteLine(GetValidDirectionsString());
@@ -71,7 +78,7 @@ namespace CastleGame
                     bool itemExists = false;
                     foreach(Item item in items)
                     {
-                        if(input_words[1] == item.GetName().ToLower())
+                        if(input_words[1] == item.GetName().ToLower() && item.GetTaken() == false)
                         {
                             itemExists = true;
                             if(item.GetRoom() == currentRoom)
@@ -79,6 +86,7 @@ namespace CastleGame
                                 Console.WriteLine($"You picked up the {item.GetName()}");
                                     Thread.Sleep(50);
                                 bag.Add(item);
+                                item.SetTaken(true);
                                 break;
                             }
                             else
@@ -96,27 +104,57 @@ namespace CastleGame
                 }
                 if(input_words[0] == "use")
                 {
-                    foreach(Item item in items)
+                    if (bag.Count > 0)
                     {
-                        if (item.GetUseRoom() == currentRoom && input_words[1] == item.GetName().ToLower())
+                        bool exitFor = false;
+                        foreach (Item item in bag)
                         {
-                            foreach (Room room in rooms)
+                            if (input_words[1] == item.GetName().ToLower())
                             {
-                                if (room.GetName() == currentRoom)
+                                if (item.GetUseRoom() == currentRoom)
                                 {
-                                    Console.WriteLine(room.GetItemUsedDesciption());
-                                        Thread.Sleep(50);
-                                    foreach (Item heldItem in bag)
+                                    foreach (Room room in rooms)
                                     {
-                                        if (heldItem.GetName().ToLower() == item.GetName().ToLower())
+                                        if (room.GetName() == currentRoom)
                                         {
-                                            bag.Remove(heldItem);
-                                            break;
+                                            Console.WriteLine(room.GetItemUsedDesciption());
+                                            Thread.Sleep(50);
+                                            foreach (Item heldItem in bag)
+                                            {
+                                                if (heldItem.GetName().ToLower() == item.GetName().ToLower())
+                                                {
+                                                    bag.Remove(heldItem);
+                                                    //required or a null pointer exception will occur
+                                                    exitFor = true;
+                                                    break; 
+                                                }
+                                            }
+                                            if(currentRoom == "Dungeon")
+                                            {
+                                                input = "quit";
+                                            }
                                         }
                                     }
                                 }
+                                else
+                                {
+                                    Console.WriteLine("This isn't the time to use that!");
+                                        Thread.Sleep(50);
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("You don't have this item");
+                            }
+                            if(exitFor == true)
+                            {
+                                break;
                             }
                         }
+                    }
+                    else
+                    {
+                        Console.WriteLine("The bag is empty! Find an item to pick up");
                     }
                 }
                 if (input_words[0] == "bag")
@@ -160,8 +198,8 @@ namespace CastleGame
             roomNames.Add("Lookout");
             roomNames.Add("Dungeon");
 
-            string Entrance_Hall_Desc = "You are in a large entrance hall with many paintings of previous owners. The faces seem to be obscured.";
-            string Corridor_Desc = "You enter a long corridor. There is a scary suit of armor that always seems to be facing you, but without moving.";
+            string Entrance_Hall_Desc = "You enter a large entrance hall with many paintings of previous owners. The faces seem to be obscured.";
+            string Corridor_Desc = "You move into a long corridor. There is a scary suit of armor that always seems to be facing you, but without moving.";
             string Kitchen_Desc = "There is a pot bubbling on the stove in the kitchen. There is a particularly smelly piece of cheese that catches your eye.";
             string Armory_Desc = "You find many strange looking weapons in the armory. There are many different types of armor on stands, ready to be used if needed.";
             string Ballroom_Desc = "The ballroom is a large open expansive room. You can see a grandfather clock, a candlestick, a teapot and a teacup with a small chip.";
@@ -169,6 +207,7 @@ namespace CastleGame
             string Smithy_ItemUsedDesc = "You give the cheese to the mouse. He grabs it and runs off knocking some items from a nearby shelf. You notice a key fall from the shelf.";
             string Lookout_Desc = "You find a large open window, perfect for spotting an attack. You can see a beautiful mountain range, with a river running towards the castle.";
             string Dungeon_Desc = "You travel down a spiral stone staircase to a dank and gloomy dungeon. You can see some light shining through the cracks of a locked door.";
+            string Dungeon_ItemUsedDesc = "Congratulations! You escaped from the spooky castle. Will you brave the castle once more and play again?";
 
             Dictionary<string, string> Entrance_Hall_Neighbours = new Dictionary<string, string>()
             {
@@ -216,7 +255,7 @@ namespace CastleGame
             Room Ballroom = new Room("Ballroom", Ballroom_Desc, Ballroom_Neighbours);
             Room Smithy = new Room("Smithy", Smithy_Desc, Smithy_Neighbours, Smithy_ItemUsedDesc);
             Room Lookout = new Room("Lookout", Lookout_Desc, Lookout_Neighbours);
-            Room Dungeon = new Room("Dungeon", Dungeon_Desc, Dungeon_Neighbours);
+            Room Dungeon = new Room("Dungeon", Dungeon_Desc, Dungeon_Neighbours, Dungeon_ItemUsedDesc);
 
             rooms.Add(Entrance_Hall);
             rooms.Add(Corridor);

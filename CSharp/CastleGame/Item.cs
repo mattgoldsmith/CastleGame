@@ -9,11 +9,13 @@ namespace CastleGame
         string name;
         string takeRoom;
         string useRoom;
+        bool taken;
         public Item(string name, string takeRoom, string useRoom)
         {
             SetName(name);
             SetRoom(takeRoom);
             SetUseRoom(useRoom);
+            SetTaken(false);
         }
    
         private void SetName(string name)
@@ -44,6 +46,16 @@ namespace CastleGame
         public string GetUseRoom()
         {
             return this.useRoom;
+        }
+
+        public void SetTaken(bool taken)
+        {
+            this.taken = taken;
+        }
+
+        public bool GetTaken()
+        {
+            return this.taken;
         }
     }
 }

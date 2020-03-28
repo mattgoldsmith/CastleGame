@@ -9,12 +9,14 @@ namespace CastleGame
         private string name;
         private string description;
         private Dictionary<string, string> neighbours;
-        public Room(string name, string description, Dictionary<string, string> neighbours)
+        private string itemUsedDesc;
+        public Room(string name, string description, Dictionary<string, string> neighbours, string itemUsedDesc = null)
         {
             SetName(name);
             SetDescription(description);
             this.neighbours = new Dictionary<string, string>();
             SetNeighbours(neighbours);
+            SetItemUsedDescription(itemUsedDesc);
         }
 
         private void SetName(string name)
@@ -34,7 +36,7 @@ namespace CastleGame
 
         public string GetDesciption()
         {
-            return this.description;
+            return description;
         }
 
         private void SetNeighbours(Dictionary<string, string> neighbours)
@@ -45,6 +47,16 @@ namespace CastleGame
         public Dictionary<string, string> GetNeighbours()
         {
             return this.neighbours;
+        }
+
+        private void SetItemUsedDescription(string description)
+        {
+            this.itemUsedDesc = description;
+        }
+
+        public string GetItemUsedDesciption()
+        {
+            return itemUsedDesc;
         }
     }
 }

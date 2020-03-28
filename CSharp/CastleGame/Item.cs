@@ -7,11 +7,13 @@ namespace CastleGame
     class Item
     {
         string name;
-        string room;
-        public Item(string name, string room)
+        string takeRoom;
+        string useRoom;
+        public Item(string name, string takeRoom, string useRoom)
         {
             SetName(name);
-            SetRoom(room);
+            SetRoom(takeRoom);
+            SetUseRoom(useRoom);
         }
    
         private void SetName(string name)
@@ -26,12 +28,22 @@ namespace CastleGame
 
         private void SetRoom(string room)
         {
-            this.room = room;
+            this.takeRoom = room;
         }
 
         public string GetRoom()
         {
-            return this.room;
+            return this.takeRoom;
+        }
+
+        private void SetUseRoom(string room)
+        {
+            this.useRoom = room;
+        }
+
+        public string GetUseRoom()
+        {
+            return this.useRoom;
         }
     }
 }

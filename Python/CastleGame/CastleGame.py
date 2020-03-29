@@ -149,35 +149,41 @@ while x.lower() != "quit":
             print(itemDesc(Current_room))
         #Take the item
         if x.lower().split()[0].strip() == "take":
-            if Items.get(Current_room) != None:
-                if Items.get(Current_room).lower() == x.lower().split()[1]:
-                    print("You picked up the " + Items.get(Current_room))
-                    Bag.append(Items.get(Current_room).lower())
-                    Items.pop(Current_room)
-                    print(Bag)
+            if len(x.lower().split()) > 1: 
+                if Items.get(Current_room) != None:
+                    if Items.get(Current_room).lower() == x.lower().split()[1]:
+                        print("You picked up the " + Items.get(Current_room))
+                        Bag.append(Items.get(Current_room).lower())
+                        Items.pop(Current_room)
+                        print(Bag)
+                    else:
+                        print("That item doesn't exist!")
                 else:
-                    print("That item doesn't exist!")
-            else:
-                print("No useable item in this room")
+                    print("No useable item in this room")
+            else: 
+                print("Please enter an item to take")
         #Use item
         if x.lower().split()[0] == "use":
-            #No item message
-            if x.lower().split()[1].strip() not in Bag:
-                print("You don't have this item")
-            #Check if you are using the item in the correct room
-            inRoom = False
-            for key in Use_items:
-                if Use_items.get(key).lower() == x.lower().split()[1].strip() and key == Current_room:
-                    inRoom = True
-            if inRoom == False and x.lower().split()[1].strip() in Bag:
-                print("This isn't the time to use that!")
-            #Use the item
-            if inRoom == True and x.lower().split()[1].strip() in Bag:
-                xCopy = x
-                Bag, x = useItem(x.lower().split()[1].strip(), Bag)
-                #Check if the returned value is not the exit clause
-                if x == '':
-                    x = xCopy
+            if len(x.lower().split()) > 1:
+                #No item message
+                if x.lower().split()[1].strip() not in Bag:
+                    print("You don't have this item")
+                #Check if you are using the item in the correct room
+                inRoom = False
+                for key in Use_items:
+                    if Use_items.get(key).lower() == x.lower().split()[1].strip() and key == Current_room:
+                        inRoom = True
+                if inRoom == False and x.lower().split()[1].strip() in Bag:
+                    print("This isn't the time to use that!")
+                #Use the item
+                if inRoom == True and x.lower().split()[1].strip() in Bag:
+                    xCopy = x
+                    Bag, x = useItem(x.lower().split()[1].strip(), Bag)
+                    #Check if the returned value is not the exit clause
+                    if x == '':
+                        x = xCopy
+            else:
+                print("Please enter an item to use")       
         #Move to a new room
         if x.lower() in directions_low:
             print("You went " + str(x))

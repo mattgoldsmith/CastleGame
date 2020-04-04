@@ -1,8 +1,11 @@
+import com.sun.xml.internal.bind.v2.TODO;
+
 import java.util.*;
 
 public class Controller {
     private ArrayList<Room> rooms;
     private ArrayList<Item> items;
+    private ArrayList<Item> bag;
     private String currentRoom;
     private ArrayList<String> keyWords;
 
@@ -20,6 +23,8 @@ public class Controller {
         keyWords.add("bag");
         keyWords.add("help");
         keyWords.add("quit");
+
+        bag =  new ArrayList<>();
 
         makeRooms();
         makeItems();
@@ -41,22 +46,33 @@ public class Controller {
             if(keyWords.contains(words[0])){
                 //TODO: Create functions for case statements
                 switch(words[0]){
-                    case "take":
-                        System.out.println("You took the item");
+                    case "take": // Take item
+                        if(1 < words.length) {
+                            System.out.println(takeItem(words[1]));
+                        }
+                        else{
+                            System.out.println("Take what?");
+                        }
                         break;
-                    case "use":
-                        System.out.println("You used the item");
+                    case "use": // Use item
+                        if(1 < words.length){
+                            System.out.println(useItem(words[1]));
+                        }
+                        else{
+                            System.out.println("Use what?");
+                        }
                         break;
-                    case "bag":
-                        System.out.println("Items in the bag");
+                    case "bag": // Display inventory
+                        System.out.println(getInventory());
                         break;
-                    case "help":
+                    case "help": // Display keywords
                         System.out.println("You can use the following commands:");
+                        System.out.println(getHelp());
                         break;
-                    case "quit":
+                    case "quit": // Quit the game
                         System.out.println("Thank you for playing! Goodbye!");
                         break;
-                    default:
+                    default: // Move room
                         move(words[0]);
                         System.out.println(getDescription());
                         System.out.println(getDirections());
@@ -149,7 +165,7 @@ public class Controller {
 
     private void makeItems() {
         String cheesePickup = "You picked up the Cheese";
-        String cheeseUse = "You give the cheese to the mouse. He grabs it and runs off knocking some items from a nearby shelf. You notice a key fall from the shelf.";
+        String cheeseUse = "You give the cheese to the mouse. He grabs it and runs off knocking some items from a nearby shelf. You notice a key fall to the ground.";
 
         String keyPickup = "You picked up the Key";
         String keyUse = "Congratulations! You escaped from the spooky castle. Will you brave the castle once more and play again?";
@@ -207,5 +223,69 @@ public class Controller {
             directionString += dir + ", ";
         }
         return directionString.substring(0, directionString.length() - 2);
+    }
+
+    private String takeItem(String takenItem){
+        //TODO: Ensure you are in the correct room before taking an item
+        System.out.println(takenItem);
+        String itemString = new String();
+        boolean itemExists = false;
+        for(Item item : items) {
+            if (item.getName().toLowerCase().equals(takenItem)) {
+                if (item.getTaken() != true) {
+                    bag.add(item);
+                    item.setTaken(true);
+                    itemExists = true;
+                    itemString = item.getPickup();
+                } else {
+                    itemString = "You have already picked this up";
+                }
+            }
+        }
+        if(!itemExists){
+            itemString = "That item doesn't exist!";
+        }
+
+        return itemString;
+    }
+
+    private String useItem(String usedItem){
+        //TODO: Ensure you are in the correct room before using an Item
+        //TODO: Remove item from bag once used
+        String useString = new String();
+        boolean inBag = false;
+        for(Item item : bag){
+            if(item.getName().toLowerCase().equals(usedItem)){
+                inBag = true;
+                useString = item.getUse();
+            }
+        }
+        if(inBag == false){
+            useString = "You don't have this item";
+        }
+        return useString;
+    }
+
+    private String getInventory(){
+        String inventoryString = new String();
+        if(bag.size() > 0) {
+            inventoryString = "You look into your bag. You find: ";
+            for (Item item : bag) {
+                inventoryString += item.getName() + ", ";
+            }
+            inventoryString = inventoryString.substring(0, inventoryString.length() - 2);
+        }
+        else{
+            inventoryString = "Your bag is empty. Try looking for thing to pickup.";
+        }
+        return inventoryString;
+    }
+
+    private String getHelp(){
+        String commands = new String();
+        for(String word : keyWords){
+            commands += word + ", ";
+        }
+        return commands.substring(0, commands.length() - 2);
     }
 }

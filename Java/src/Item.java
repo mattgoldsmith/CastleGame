@@ -9,6 +9,8 @@ public class Item {
         setName(name);
         setRoom(room);
         setTaken(taken);
+        setPickup(pickup);
+        setUse(use);
     }
 
     private void setName(String name){

@@ -1,26 +1,72 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class Controller {
     private ArrayList<Room> rooms;
     private ArrayList<Item> items;
+    private String currentRoom;
+    private ArrayList<String> keyWords;
 
     Controller(){
+        currentRoom = "Entrance Hall";
+
+        keyWords = new ArrayList<>();
+//        keyWords.add("go");
+        keyWords.add("north");
+        keyWords.add("east");
+        keyWords.add("south");//
+        keyWords.add("west");
+        keyWords.add("take");
+        keyWords.add("use");
+        keyWords.add("bag");
+        keyWords.add("help");
+        keyWords.add("quit");
+
         makeRooms();
         makeItems();
         startInput();
     }
 
     private void startInput() {
-        Scanner scan = new Scanner(System.in);  // Create a Scanner object
+        Scanner scan = new Scanner(System.in);  // Create a Scanner object to read user input
         System.out.println("You enter a spooky castle");
         String input = "";
 
+        System.out.println(getDescription());
+        System.out.println(getDirections());
+
         while(!input.equals("quit")){
-            input = scan.nextLine().toLowerCase();  // Read user input
+            input = scan.nextLine().toLowerCase();  // Read user input and convert to lowercase
             String[] words = input.split(" ");
-            System.out.println(input);
+//            System.out.println(input);
+            if(keyWords.contains(words[0])){
+                //TODO: Create functions for case statements
+                switch(words[0]){
+                    case "take":
+                        System.out.println("You took the item");
+                        break;
+                    case "use":
+                        System.out.println("You used the item");
+                        break;
+                    case "bag":
+                        System.out.println("Items in the bag");
+                        break;
+                    case "help":
+                        System.out.println("You can use the following commands:");
+                        break;
+                    case "quit":
+                        System.out.println("Thank you for playing! Goodbye!");
+                        break;
+                    default:
+                        move(words[0]);
+                        System.out.println(getDescription());
+                        System.out.println(getDirections());
+                }
+            }
+            else{
+                System.out.println("Please enter a direction or command.");
+                System.out.println("A list of commands can be found by entering 'help'");
+            }
+
         }
 
     }
@@ -37,34 +83,34 @@ public class Controller {
         String dungeonName = "Dungeon";
 
         //room neighbours
-        HashMap<String,String> entranceNeighbours = new HashMap<>();
+        LinkedHashMap<String,String> entranceNeighbours = new LinkedHashMap<>();
         entranceNeighbours.put("North","Corridor");
 
-        HashMap<String,String> corridorNeighbours = new HashMap<>();
+        LinkedHashMap<String,String> corridorNeighbours = new LinkedHashMap<>();
         corridorNeighbours.put("North","Armory");
         corridorNeighbours.put("South","Entrance Hall");
         corridorNeighbours.put("West","Kitchen");
 
-        HashMap<String,String> kitchenNeighbours = new HashMap<>();
+        LinkedHashMap<String,String> kitchenNeighbours = new LinkedHashMap<>();
         kitchenNeighbours.put("East","Corridor");
 
-        HashMap<String,String> armoryNeighbours = new HashMap<>();
+        LinkedHashMap<String,String> armoryNeighbours = new LinkedHashMap<>();
         armoryNeighbours.put("North","Ballroom");
         armoryNeighbours.put("South","Corridor");
 
-        HashMap<String,String> ballroomNeighbours = new HashMap<>();
+        LinkedHashMap<String,String> ballroomNeighbours = new LinkedHashMap<>();
         ballroomNeighbours.put("North","Lookout");
         ballroomNeighbours.put("East","Dungeon");
         ballroomNeighbours.put("South","Armory");
         ballroomNeighbours.put("West","Smithy");
 
-        HashMap<String,String> smithyNeighbours = new HashMap<>();
+        LinkedHashMap<String,String> smithyNeighbours = new LinkedHashMap<>();
         smithyNeighbours.put("East","Ballroom");
 
-        HashMap<String,String> lookoutNeighbours = new HashMap<>();
+        LinkedHashMap<String,String> lookoutNeighbours = new LinkedHashMap<>();
         lookoutNeighbours.put("South","Ballroom");
 
-        HashMap<String,String> dungeonNeighbours = new HashMap<>();
+        LinkedHashMap<String,String> dungeonNeighbours = new LinkedHashMap<>();
         dungeonNeighbours.put("West","Ballroom");
 
 
@@ -114,5 +160,52 @@ public class Controller {
         items = new ArrayList<>();
         items.add(key);
         items.add(cheese);
+    }
+
+    private void move(String direction){
+        Room thisRoom = null;
+
+        for(Room room : rooms){
+            if(room.getName().equals(currentRoom)){
+                thisRoom = room;
+            }
+        }
+
+        assert thisRoom != null;
+        HashMap<String, String> neighbours = thisRoom.getNeighbors();
+
+        for(String dir : neighbours.keySet()){
+            String room = neighbours.get(dir);
+
+            if(dir.toLowerCase().equals(direction)){
+                currentRoom = room;
+            }
+        }
+    }
+
+    private String getDescription(){
+        String description = null;
+        for(Room room: rooms){
+            if(room.getName().equals(currentRoom)){
+                description = room.getDescription();
+            }
+        }
+        return description;
+    }
+
+    private String getDirections(){
+        Room room = null;
+        for(Room checkRoom : rooms){
+            if(checkRoom.getName().equals(currentRoom)){
+                room = checkRoom;
+            }
+        }
+        System.out.println(room.getName());
+        HashMap<String,String> directions = room.getNeighbors();
+        String directionString = "Available directions are ";
+        for(String dir : directions.keySet()){
+            directionString += dir + ", ";
+        }
+        return directionString.substring(0, directionString.length() - 2);
     }
 }

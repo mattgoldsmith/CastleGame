@@ -214,11 +214,12 @@ public class Controller {
                 room = checkRoom;
             }
         }
+        assert room != null;
         System.out.println(room.getName());
         HashMap<String,String> directions = room.getNeighbors();
-        String directionString = "Available directions are ";
+        StringBuilder directionString = new StringBuilder("Available directions are ");
         for(String dir : directions.keySet()){
-            directionString += dir + ", ";
+            directionString.append(dir).append(", ");
         }
         return directionString.substring(0, directionString.length() - 2);
     }
@@ -226,11 +227,11 @@ public class Controller {
     private String takeItem(String takenItem){
         //TODO: Ensure you are in the correct room before taking an item
         System.out.println(takenItem);
-        String itemString = new String();
+        String itemString = "";
         boolean itemExists = false;
         for(Item item : items) {
             if (item.getName().toLowerCase().equals(takenItem)) {
-                if (item.getTaken() != true) {
+                if (!item.getTaken()) {
                     bag.add(item);
                     item.setTaken(true);
                     itemExists = true;
@@ -250,7 +251,7 @@ public class Controller {
     private String useItem(String usedItem){
         //TODO: Ensure you are in the correct room before using an Item
         //TODO: Remove item from bag once used
-        String useString = new String();
+        String useString = "";
         boolean inBag = false;
         for(Item item : bag){
             if(item.getName().toLowerCase().equals(usedItem)){
@@ -258,31 +259,31 @@ public class Controller {
                 useString = item.getUse();
             }
         }
-        if(inBag == false){
+        if(!inBag){
             useString = "You don't have this item";
         }
         return useString;
     }
 
     private String getInventory(){
-        String inventoryString = new String();
+        StringBuilder inventoryString;
         if(bag.size() > 0) {
-            inventoryString = "You look into your bag. You find: ";
+            inventoryString = new StringBuilder("You look into your bag. You find: ");
             for (Item item : bag) {
-                inventoryString += item.getName() + ", ";
+                inventoryString.append(item.getName()).append(", ");
             }
-            inventoryString = inventoryString.substring(0, inventoryString.length() - 2);
+            inventoryString = new StringBuilder(inventoryString.substring(0, inventoryString.length() - 2));
         }
         else{
-            inventoryString = "Your bag is empty. Try looking for thing to pickup.";
+            inventoryString = new StringBuilder("Your bag is empty. Try looking for thing to pickup.");
         }
-        return inventoryString;
+        return inventoryString.toString();
     }
 
     private String getHelp(){
-        String commands = new String();
+        StringBuilder commands = new StringBuilder();
         for(String word : keyWords){
-            commands += word + ", ";
+            commands.append(word).append(", ");
         }
         return commands.substring(0, commands.length() - 2);
     }

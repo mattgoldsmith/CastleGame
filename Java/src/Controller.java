@@ -6,12 +6,14 @@ public class Controller {
     private ArrayList<Item> bag;
     private String currentRoom;
     private ArrayList<String> keyWords;
+    private String input;
+    private boolean win;
 
     Controller(){
         currentRoom = "Entrance Hall";
 
         keyWords = new ArrayList<>();
-//        keyWords.add("go");
+        keyWords.add("go");
         keyWords.add("north");
         keyWords.add("east");
         keyWords.add("south");//
@@ -24,6 +26,8 @@ public class Controller {
 
         bag =  new ArrayList<>();
 
+        win = false;
+
         makeRooms();
         makeItems();
         startInput();
@@ -32,7 +36,7 @@ public class Controller {
     private void startInput() {
         Scanner scan = new Scanner(System.in);  // Create a Scanner object to read user input
         System.out.println("You enter a spooky castle");
-        String input = "";
+        input = "";
 
         System.out.println(getDescription());
         System.out.println(getDirections());
@@ -40,10 +44,16 @@ public class Controller {
         while(!input.equals("quit")){
             input = scan.nextLine().toLowerCase();  // Read user input and convert to lowercase
             String[] words = input.split(" ");
-//            System.out.println(input);
             if(keyWords.contains(words[0])){
-                //TODO: Create functions for case statements
                 switch(words[0]){
+                    case "go":
+                        if(1 < words.length) {
+                            move(words[1]);
+                        }
+                        else{
+                            System.out.println("Go where?");
+                        }
+                        break;
                     case "take": // Take item
                         if(1 < words.length) {
                             System.out.println(takeItem(words[1]));
@@ -68,19 +78,19 @@ public class Controller {
                         System.out.println(getHelp());
                         break;
                     case "quit": // Quit the game
-                        System.out.println("Thank you for playing! Goodbye!");
+                        quit();
                         break;
                     default: // Move room
                         move(words[0]);
-                        System.out.println(getDescription());
-                        System.out.println(getDirections());
                 }
             }
             else{
                 System.out.println("Please enter a direction or command.");
                 System.out.println("A list of commands can be found by entering 'help'");
             }
-
+            if(win){
+                quit();
+            }
         }
 
     }
@@ -168,8 +178,8 @@ public class Controller {
         String keyPickup = "You picked up the Key";
         String keyUse = "Congratulations! You escaped from the spooky castle. Will you brave the castle once more and play again?";
         
-        Item key = new Item("Cheese","Kitchen",false,cheesePickup,cheeseUse);
-        Item cheese = new Item("Key","Smithy", false,keyPickup,keyUse);
+        Item key = new Item("Cheese","Kitchen","Smithy",false,cheesePickup,cheeseUse);
+        Item cheese = new Item("Key","Smithy", "Dungeon",false,keyPickup,keyUse);
 
         items = new ArrayList<>();
         items.add(key);
@@ -195,6 +205,8 @@ public class Controller {
                 currentRoom = room;
             }
         }
+        System.out.println(getDescription());
+        System.out.println(getDirections());
     }
 
     private String getDescription(){
@@ -215,7 +227,6 @@ public class Controller {
             }
         }
         assert room != null;
-        System.out.println(room.getName());
         HashMap<String,String> directions = room.getNeighbors();
         StringBuilder directionString = new StringBuilder("Available directions are ");
         for(String dir : directions.keySet()){
@@ -225,19 +236,22 @@ public class Controller {
     }
 
     private String takeItem(String takenItem){
-        //TODO: Ensure you are in the correct room before taking an item
-        System.out.println(takenItem);
         String itemString = "";
         boolean itemExists = false;
         for(Item item : items) {
             if (item.getName().toLowerCase().equals(takenItem)) {
-                if (!item.getTaken()) {
-                    bag.add(item);
-                    item.setTaken(true);
-                    itemExists = true;
-                    itemString = item.getPickup();
-                } else {
-                    itemString = "You have already picked this up";
+                if(item.getRoom().equals(currentRoom)){
+                    if (!item.getTaken()) {
+                        bag.add(item);
+                        item.setTaken(true);
+                        itemExists = true;
+                        itemString = item.getPickup();
+                    } else {
+                        itemString = "You have already picked this up";
+                    }
+                }
+                else{
+                    itemString = "That item doesn't exist!";
                 }
             }
         }
@@ -249,14 +263,23 @@ public class Controller {
     }
 
     private String useItem(String usedItem){
-        //TODO: Ensure you are in the correct room before using an Item
-        //TODO: Remove item from bag once used
         String useString = "";
         boolean inBag = false;
         for(Item item : bag){
-            if(item.getName().toLowerCase().equals(usedItem)){
+            if(item.getName().toLowerCase().equals(usedItem)) {
                 inBag = true;
-                useString = item.getUse();
+                if (item.getUseRoom().equals(currentRoom)) {
+                    useString = item.getUse();
+                    bag.remove(item);
+                    if(currentRoom.equals("Dungeon")){
+                        win = true;
+                        input = "quit";
+                    }
+                    break;
+                }
+                else{
+                    useString = "This isn't the time to use that!";
+                }
             }
         }
         if(!inBag){
@@ -275,7 +298,7 @@ public class Controller {
             inventoryString = new StringBuilder(inventoryString.substring(0, inventoryString.length() - 2));
         }
         else{
-            inventoryString = new StringBuilder("Your bag is empty. Try looking for thing to pickup.");
+            inventoryString = new StringBuilder("Your bag is empty. Try looking for something to pickup.");
         }
         return inventoryString.toString();
     }
@@ -286,5 +309,9 @@ public class Controller {
             commands.append(word).append(", ");
         }
         return commands.substring(0, commands.length() - 2);
+    }
+
+    private void quit(){
+        System.out.println("Thank you for playing! Goodbye!");
     }
 }

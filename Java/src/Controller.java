@@ -43,7 +43,11 @@ public class Controller {
         System.out.println(getDescription());
         System.out.println(getDirections());
 
+        gui.setText(getDescription());
+        gui.setText(getDirections());
+
         while(!input.equals("quit")){
+            //TODO: pause loop and wait for user input (enter key)
             input = scan.nextLine().toLowerCase();  // Read user input and convert to lowercase
             String[] words = input.split(" ");
             if(keyWords.contains(words[0])){
@@ -224,6 +228,7 @@ public class Controller {
     }
 
     private String getDirections(){
+        //TODO: Check if there is only 1 direction, change grammar
         Room room = null;
         for(Room checkRoom : rooms){
             if(checkRoom.getName().equals(currentRoom)){

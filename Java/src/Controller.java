@@ -8,6 +8,7 @@ public class Controller {
     private ArrayList<String> keyWords;
     private String input;
     private boolean win;
+    private GUI gui;
 
     Controller(){
         currentRoom = "Entrance Hall";
@@ -34,6 +35,7 @@ public class Controller {
     }
 
     private void startInput() {
+        gui = new GUI();
         Scanner scan = new Scanner(System.in);  // Create a Scanner object to read user input
         System.out.println("You enter a spooky castle");
         input = "";
@@ -55,6 +57,7 @@ public class Controller {
                         }
                         break;
                     case "take": // Take item
+                        //TODO: check for "take the..." or "use a..."
                         if(1 < words.length) {
                             System.out.println(takeItem(words[1]));
                         }
@@ -63,6 +66,7 @@ public class Controller {
                         }
                         break;
                     case "use": // Use item
+                        //TODO: check for "use the..." or "ues a..."
                         if(1 < words.length){
                             System.out.println(useItem(words[1]));
                         }

@@ -35,6 +35,7 @@ public class Controller {
     }
 
     private void startInput() {
+        //TODO: Change scanner to gui input
         gui = new GUI();
         Scanner scan = new Scanner(System.in);  // Create a Scanner object to read user input
         System.out.println("You enter a spooky castle");
@@ -61,18 +62,26 @@ public class Controller {
                         }
                         break;
                     case "take": // Take item
-                        //TODO: check for "take the..." or "use a..."
                         if(1 < words.length) {
-                            System.out.println(takeItem(words[1]));
+                            if((words[1].equals("a") || words[1].equals("the")) && words.length > 2){
+                                System.out.println(takeItem(words[2]));
+                            }
+                            else{
+                                System.out.println(takeItem(words[1]));
+                            }
                         }
                         else{
                             System.out.println("Take what?");
                         }
                         break;
                     case "use": // Use item
-                        //TODO: check for "use the..." or "ues a..."
                         if(1 < words.length){
-                            System.out.println(useItem(words[1]));
+                            if((words[1].equals("a") || words[1].equals("the")) && words.length > 2){
+                                System.out.println(useItem(words[2]));
+                            }
+                            else{
+                                System.out.println(useItem(words[1]));
+                            }
                         }
                         else{
                             System.out.println("Use what?");
@@ -228,7 +237,6 @@ public class Controller {
     }
 
     private String getDirections(){
-        //TODO: Check if there is only 1 direction, change grammar
         Room room = null;
         for(Room checkRoom : rooms){
             if(checkRoom.getName().equals(currentRoom)){
@@ -237,7 +245,14 @@ public class Controller {
         }
         assert room != null;
         HashMap<String,String> directions = room.getNeighbors();
-        StringBuilder directionString = new StringBuilder("Available directions are ");
+        StringBuilder directionString;
+        if(directions.size() > 1){
+            directionString = new StringBuilder("Available directions are ");
+        }
+        else{
+            directionString = new StringBuilder("Available direction is ");
+        }
+
         for(String dir : directions.keySet()){
             directionString.append(dir).append(", ");
         }

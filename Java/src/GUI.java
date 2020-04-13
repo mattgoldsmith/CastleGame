@@ -1,6 +1,7 @@
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class GUI {
     private JFrame frame = new JFrame("Castle Game");
@@ -11,6 +12,7 @@ public class GUI {
         createJFrame();
         createLabel();
         createJTextField();
+        addListener();
         show();
     }
 
@@ -54,5 +56,17 @@ public class GUI {
     public void setText(String input){
         String text = label.getText();
         label.setText(text + input + "\n");
+    }
+
+    private String addListener(){
+        final String[] input = {""};
+        textField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println(e.getActionCommand());
+                input[0] = e.getActionCommand();
+                System.out.println(input[0]);
+            }
+        });
+        return input[0];
     }
 }

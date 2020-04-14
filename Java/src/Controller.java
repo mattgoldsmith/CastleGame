@@ -1,3 +1,5 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 
 public class Controller {
@@ -35,9 +37,8 @@ public class Controller {
     }
 
     private void startInput() {
-        //TODO: Change scanner to gui input
         gui = new GUI();
-        Scanner scan = new Scanner(System.in);  // Create a Scanner object to read user input
+        gui.setText("You enter a spooky castle");
         System.out.println("You enter a spooky castle");
         input = "";
 
@@ -47,68 +48,154 @@ public class Controller {
         gui.setText(getDescription());
         gui.setText(getDirections());
 
-        while(!input.equals("quit")){
-            //TODO: pause loop and wait for user input (enter key)
-            input = scan.nextLine().toLowerCase();  // Read user input and convert to lowercase
-            String[] words = input.split(" ");
-            if(keyWords.contains(words[0])){
-                switch(words[0]){
-                    case "go":
-                        if(1 < words.length) {
-                            move(words[1]);
-                        }
-                        else{
-                            System.out.println("Go where?");
-                        }
-                        break;
-                    case "take": // Take item
-                        if(1 < words.length) {
-                            if((words[1].equals("a") || words[1].equals("the")) && words.length > 2){
-                                System.out.println(takeItem(words[2]));
-                            }
-                            else{
-                                System.out.println(takeItem(words[1]));
-                            }
-                        }
-                        else{
-                            System.out.println("Take what?");
-                        }
-                        break;
-                    case "use": // Use item
-                        if(1 < words.length){
-                            if((words[1].equals("a") || words[1].equals("the")) && words.length > 2){
-                                System.out.println(useItem(words[2]));
-                            }
-                            else{
-                                System.out.println(useItem(words[1]));
-                            }
-                        }
-                        else{
-                            System.out.println("Use what?");
-                        }
-                        break;
-                    case "bag": // Display inventory
-                        System.out.println(getInventory());
-                        break;
-                    case "help": // Display keywords
-                        System.out.println("You can use the following commands:");
-                        System.out.println(getHelp());
-                        break;
-                    case "quit": // Quit the game
-                        quit();
-                        break;
-                    default: // Move room
-                        move(words[0]);
+        gui.getJTextField().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if(win){
+                    gui.getFrame().setVisible(false);
+                    gui.getFrame().dispose();
                 }
+                input = e.getActionCommand().toLowerCase();
+                gui.setText(input);
+                System.out.println(input);
+                String[] words = input.split(" ");
+                if(keyWords.contains(words[0])){
+                    switch(words[0]){
+                        case "go":
+                            if(1 < words.length) {
+                                move(words[1]);
+                            }
+                            else{
+                                gui.setText("Go where?");
+                                System.out.println("Go where?");
+                            }
+                            break;
+                        case "take": // Take item
+                            if(1 < words.length) {
+                                if((words[1].equals("a") || words[1].equals("the")) && words.length > 2){
+                                    gui.setText(takeItem(words[2]));
+                                    System.out.println(takeItem(words[2]));
+                                }
+                                else{
+                                    gui.setText(takeItem(words[1]));
+                                    System.out.println(takeItem(words[1]));
+                                }
+                            }
+                            else{
+                                System.out.println("Take what?");
+                            }
+                            break;
+                        case "use": // Use item
+                            if(1 < words.length){
+                                if((words[1].equals("a") || words[1].equals("the")) && words.length > 2){
+                                    gui.setText(useItem(words[2]));
+                                    System.out.println(useItem(words[2]));
+                                }
+                                else{
+                                    gui.setText(useItem(words[1]));
+                                    System.out.println(useItem(words[1]));
+                                }
+                            }
+                            else{
+                                gui.setText("Use what?");
+                                System.out.println("Use what?");
+                            }
+                            break;
+                        case "bag": // Display inventory
+                            gui.setText(getInventory());
+                            System.out.println(getInventory());
+                            break;
+                        case "help": // Display keywords
+                            gui.setText("You can use the following commands:");
+                            gui.setText(getHelp());
+                            System.out.println("You can use the following commands:");
+                            System.out.println(getHelp());
+                            break;
+                        case "quit": // Quit the game
+                            quit();
+                            break;
+                        default: // Move room
+                            move(words[0]);
+                    }
+                }
+                else{
+                    gui.setText("Please enter a direction or command.");
+                    gui.setText("A list of commands can be found by entering 'help'");
+                    System.out.println("Please enter a direction or command.");
+                    System.out.println("A list of commands can be found by entering 'help'");
+                }
+                if(win){
+                    quit();
+                }
+
+                gui.getJTextField().setText("");
+                //get focus of text input
+                gui.getJTextField().grabFocus();
+                gui.getJTextField().requestFocus();
             }
-            else{
-                System.out.println("Please enter a direction or command.");
-                System.out.println("A list of commands can be found by entering 'help'");
-            }
-            if(win){
-                quit();
-            }
-        }
+        });
+
+//        while(!input.equals("quit")){
+//            //TODO: pause loop and wait for user input (enter key)
+//            input = scan.nextLine().toLowerCase();  // Read user input and convert to lowercase
+//            String[] words = input.split(" ");
+//            if(keyWords.contains(words[0])){
+//                switch(words[0]){
+//                    case "go":
+//                        if(1 < words.length) {
+//                            move(words[1]);
+//                        }
+//                        else{
+//                            System.out.println("Go where?");
+//                        }
+//                        break;
+//                    case "take": // Take item
+//                        if(1 < words.length) {
+//                            if((words[1].equals("a") || words[1].equals("the")) && words.length > 2){
+//                                System.out.println(takeItem(words[2]));
+//                            }
+//                            else{
+//                                System.out.println(takeItem(words[1]));
+//                            }
+//                        }
+//                        else{
+//                            System.out.println("Take what?");
+//                        }
+//                        break;
+//                    case "use": // Use item
+//                        if(1 < words.length){
+//                            if((words[1].equals("a") || words[1].equals("the")) && words.length > 2){
+//                                System.out.println(useItem(words[2]));
+//                            }
+//                            else{
+//                                System.out.println(useItem(words[1]));
+//                            }
+//                        }
+//                        else{
+//                            System.out.println("Use what?");
+//                        }
+//                        break;
+//                    case "bag": // Display inventory
+//                        System.out.println(getInventory());
+//                        break;
+//                    case "help": // Display keywords
+//                        System.out.println("You can use the following commands:");
+//                        System.out.println(getHelp());
+//                        break;
+//                    case "quit": // Quit the game
+//                        quit();
+//                        break;
+//                    default: // Move room
+//                        move(words[0]);
+//                }
+//            }
+//            else{
+//                System.out.println("Please enter a direction or command.");
+//                System.out.println("A list of commands can be found by entering 'help'");
+//            }
+//            if(win){
+//                quit();
+//            }
+//        }
 
     }
 
@@ -222,6 +309,8 @@ public class Controller {
                 currentRoom = room;
             }
         }
+        gui.setText(getDescription());
+        gui.setText(getDirections());
         System.out.println(getDescription());
         System.out.println(getDirections());
     }
@@ -336,6 +425,8 @@ public class Controller {
     }
 
     private void quit(){
+        gui.setText("Thank you for playing! Goodbye!");
+        gui.setText("press enter to exit");
         System.out.println("Thank you for playing! Goodbye!");
     }
 }

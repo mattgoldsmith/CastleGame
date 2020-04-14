@@ -12,7 +12,6 @@ public class GUI {
         createJFrame();
         createLabel();
         createJTextField();
-        addListener();
         show();
     }
 
@@ -21,7 +20,6 @@ public class GUI {
     }
 
     private void createJTextField(){
-        //TODO: Add Listener for enter key
         Dimension dimension = new Dimension(1000,35);
         textField.setPreferredSize(dimension);
         Font font = new Font("SansSerif", Font.BOLD, 20);
@@ -36,13 +34,16 @@ public class GUI {
 
     private void createLabel(){
         Dimension dimension = new Dimension(1000,500);
-        label.setPreferredSize(dimension);
+//        label.setPreferredSize(dimension);
+        JScrollPane scrollPane = new JScrollPane(label);
+        scrollPane.setPreferredSize(dimension);
         Font font = new Font("SansSerif", Font.BOLD, 20);
         label.setFont(font);
         label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
         label.setEditable(false);
         label.setLineWrap(true);
-        frame.getContentPane().add(label, BorderLayout.NORTH);
+        label.setWrapStyleWord(true);
+        frame.getContentPane().add(scrollPane, BorderLayout.NORTH);
     }
     public JTextArea getLabel(){
         return label;
@@ -51,6 +52,8 @@ public class GUI {
     private void show(){
         frame.pack();
         frame.setVisible(true);
+        textField.grabFocus();
+        textField.requestFocus();
     }
 
     public void setText(String input){
@@ -58,15 +61,8 @@ public class GUI {
         label.setText(text + input + "\n");
     }
 
-    private String addListener(){
-        final String[] input = {""};
-        textField.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(e.getActionCommand());
-                input[0] = e.getActionCommand();
-                System.out.println(input[0]);
-            }
-        });
-        return input[0];
+    public JFrame getFrame(){
+        return frame;
     }
+
 }

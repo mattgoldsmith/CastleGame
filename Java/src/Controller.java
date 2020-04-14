@@ -8,7 +8,6 @@ public class Controller {
     private ArrayList<String> keyWords;
     private String input;
     private boolean win;
-    private GUI gui;
 
     Controller(){
         currentRoom = "Entrance Hall";
@@ -36,16 +35,12 @@ public class Controller {
 
     private void startInput() {
         //TODO: Change scanner to gui input
-        gui = new GUI();
         Scanner scan = new Scanner(System.in);  // Create a Scanner object to read user input
         System.out.println("You enter a spooky castle");
         input = "";
 
         System.out.println(getDescription());
         System.out.println(getDirections());
-
-        gui.setText(getDescription());
-        gui.setText(getDirections());
 
         while(!input.equals("quit")){
             //TODO: pause loop and wait for user input (enter key)

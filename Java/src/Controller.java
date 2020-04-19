@@ -10,6 +10,7 @@ public class Controller {
     private ArrayList<String> keyWords;
     private String input;
     private boolean win;
+    private boolean quit;
     private GUI gui;
 
     Controller(){
@@ -30,6 +31,7 @@ public class Controller {
         bag =  new ArrayList<>();
 
         win = false;
+        quit = false;
 
         makeRooms();
         makeItems();
@@ -50,7 +52,7 @@ public class Controller {
 
         gui.getJTextField().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(win){
+                if(win || quit){
                     gui.getFrame().setVisible(false);
                     gui.getFrame().dispose();
                 }
@@ -133,70 +135,6 @@ public class Controller {
                 gui.getJTextField().requestFocus();
             }
         });
-
-//        while(!input.equals("quit")){
-//            //TODO: pause loop and wait for user input (enter key)
-//            input = scan.nextLine().toLowerCase();  // Read user input and convert to lowercase
-//            String[] words = input.split(" ");
-//            if(keyWords.contains(words[0])){
-//                switch(words[0]){
-//                    case "go":
-//                        if(1 < words.length) {
-//                            move(words[1]);
-//                        }
-//                        else{
-//                            System.out.println("Go where?");
-//                        }
-//                        break;
-//                    case "take": // Take item
-//                        if(1 < words.length) {
-//                            if((words[1].equals("a") || words[1].equals("the")) && words.length > 2){
-//                                System.out.println(takeItem(words[2]));
-//                            }
-//                            else{
-//                                System.out.println(takeItem(words[1]));
-//                            }
-//                        }
-//                        else{
-//                            System.out.println("Take what?");
-//                        }
-//                        break;
-//                    case "use": // Use item
-//                        if(1 < words.length){
-//                            if((words[1].equals("a") || words[1].equals("the")) && words.length > 2){
-//                                System.out.println(useItem(words[2]));
-//                            }
-//                            else{
-//                                System.out.println(useItem(words[1]));
-//                            }
-//                        }
-//                        else{
-//                            System.out.println("Use what?");
-//                        }
-//                        break;
-//                    case "bag": // Display inventory
-//                        System.out.println(getInventory());
-//                        break;
-//                    case "help": // Display keywords
-//                        System.out.println("You can use the following commands:");
-//                        System.out.println(getHelp());
-//                        break;
-//                    case "quit": // Quit the game
-//                        quit();
-//                        break;
-//                    default: // Move room
-//                        move(words[0]);
-//                }
-//            }
-//            else{
-//                System.out.println("Please enter a direction or command.");
-//                System.out.println("A list of commands can be found by entering 'help'");
-//            }
-//            if(win){
-//                quit();
-//            }
-//        }
-
     }
 
     private void makeRooms() {
@@ -425,6 +363,7 @@ public class Controller {
     }
 
     private void quit(){
+        quit = true;
         gui.setText("Thank you for playing! Goodbye!");
         gui.setText("press enter to exit");
         System.out.println("Thank you for playing! Goodbye!");

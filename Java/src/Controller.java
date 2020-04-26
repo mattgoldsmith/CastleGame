@@ -1,5 +1,7 @@
+import javax.sound.sampled.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.*;
 
 public class Controller {
@@ -324,6 +326,7 @@ public class Controller {
                     bag.remove(item);
                     if(currentRoom.equals("Dungeon")){
                         win = true;
+                        winSound();
                         input = "quit";
                     }
                     break;
@@ -367,5 +370,19 @@ public class Controller {
         gui.setText("Thank you for playing! Goodbye!");
         gui.setText("press enter to exit");
         System.out.println("Thank you for playing! Goodbye!");
+    }
+
+    private void winSound(){
+        String filename = "resources\\sounds\\242671__reitanna__tada.wav";
+        try{
+            this.getClass().getClassLoader().getResourceAsStream(filename);
+            Clip clip = AudioSystem.getClip();
+            //clip.open((AudioInputStream) this.getClass().getClassLoader().getResourceAsStream(filename));
+            clip.open(AudioSystem.getAudioInputStream(new File(filename)));
+            clip.start();
+        }
+        catch (Exception exc){
+            exc.printStackTrace(System.out);
+        }
     }
 }

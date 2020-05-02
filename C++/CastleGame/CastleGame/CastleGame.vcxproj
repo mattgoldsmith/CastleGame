@@ -149,9 +149,13 @@
   <ItemGroup>
     <ClCompile Include="CastleGame.cpp" />
     <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Room.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Controller.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="Room.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

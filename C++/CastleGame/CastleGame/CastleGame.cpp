@@ -1,11 +1,267 @@
 // CastleGame.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+
+//TODO: convert from single file to multi class files
 
 #include <iostream>
+#include <unordered_map>
+#include <map>
+
+//using namespace std;
+
+//Room class
+struct Room
+{
+private:
+	std::string name;
+	std::string description;
+	std::unordered_map<std::string, std::string> neighbours;
+public:
+	void makeRoom(std::string name, std::string description, std::unordered_map<std::string, std::string> neighbours) {
+		this->name = name;
+		this->description = description;
+		this->neighbours = neighbours;
+	}
+
+	std::string getName() {
+		return name;
+	}
+
+	std::string getDescription() {
+		return description;
+	}
+
+	std::unordered_map<std::string, std::string> getNeighbours() {
+		return neighbours;
+	}
+
+};
+
+
+//Item class
+struct Item
+{
+private:
+	std::string name;
+	std::string room;
+	std::string useRoom;
+	std::string pickupDesc;
+	std::string useDesc;
+	bool used;
+public:
+	//No constructor so the object can be a field instantiated from a method.
+	void makeItem(std::string name, std::string room, std::string useRoom, std::string pickupDesc, std::string useDesc) {
+		this->name = name;
+		this->room = room;
+		this->useRoom = useRoom;
+		this->pickupDesc = pickupDesc;
+		this->useDesc = useDesc;
+		used = false;
+	}
+
+	std::string getName() {
+		return name;
+	}
+
+	std::string getRoom() {
+		return room;
+	}
+
+	std::string getUseRoom() {
+		return useRoom;
+	}
+
+	std::string getPickupDesc() {
+		return pickupDesc;
+	}
+
+	std::string getUsedDesc() {
+		return useDesc;
+	}
+
+	void setUsed(bool used) {
+		this->used = used;
+	}
+	bool getUsed() {
+		return used;
+	}
+};
+
+//Controller class (renamed as name already taken)
+class Controller1
+{
+private:
+	//Room objects
+	Room entranceHall;
+	Room corridor;
+	Room kitchen;
+	Room armory;
+	Room ballroom;
+	Room smithy;
+	Room lookout;
+	Room dungeon;
+
+	//Item objects
+	Item cheese;
+	Item key;
+public:
+	
+	Controller1() {
+		makeRooms();
+		makeItems();
+		start();
+	};
+
+	void makeRooms() {
+
+		std::string entranceHallName = "Entrance Hall";
+		std::string corridorName = "Corridor";
+		std::string kitchenName = "Kitchen";
+		std::string armoryName = "Armory";
+		std::string ballroomName = "Ballroom";
+		std::string smithyName = "Smithy";
+		std::string lookoutName = "Lookout";
+		std::string dungeonName = "Dungeon";
+
+		std::string entrance_Hall_Desc = "You enter a large entrance hall with many paintings of previous owners. The faces seem to be obscured.";
+		std::string corridor_Desc = "You move into a long corridor. There is a scary suit of armor that always seems to be facing you, but without moving.";
+		std::string kitchen_Desc = "There is a pot bubbling on the stove in the kitchen. There is a particularly smelly piece of cheese that catches your eye.";
+		std::string armory_Desc = "You find many strange looking weapons in the armory. There are many different types of armor on stands, ready to be used if needed.";
+		std::string ballroom_Desc = "The ballroom is a large open expansive room. You can see a grandfather clock, a candlestick, a teapot and a teacup with a small chip.";
+		std::string smithy_Desc = "In the smithy, you find multiple tools for forging armor. There appears to be a small mouse running around.";
+		std::string lookout_Desc = "You find a large open window, perfect for spotting an attack. You can see a beautiful mountain range, with a river running towards the castle.";
+		std::string dungeon_Desc = "You travel down a spiral stone staircase to a dank and gloomy dungeon. You can see some light shining through the cracks of a locked door.";
+		
+		std::unordered_map<std::string, std::string> entranceHallNeighbors{
+			{"North","Corridor"}
+		};
+		std::unordered_map<std::string, std::string> corridorNeighbors{
+			{"North","Armory"},
+			{ "South","Entrance Hall"},
+			{ "West","Kitchen"}
+		};
+		std::unordered_map<std::string, std::string> kitchenNeighbors{
+			{"East","Corridor"}
+		};
+		std::unordered_map<std::string, std::string> armoryNeighbors{
+			{"North","Ballroom"},
+			{"South","Corridor"}
+		};
+		std::unordered_map<std::string, std::string> ballroomNeighbors{
+			{"North","Lookout"},
+			{"East","Dungeon"},
+			{"South","Armory"},
+			{"West","Smithy"}
+		};
+		std::unordered_map<std::string, std::string> smithyNeighbors{
+			{"East","Ballroom"}
+		};
+		std::unordered_map<std::string, std::string> lookoutNeighbors{
+			{"South","Ballroom"}
+		};
+		std::unordered_map<std::string, std::string> dungeonNeighbors{
+			{"West","Ballroom"}
+		};
+
+		entranceHall.makeRoom(entranceHallName, entrance_Hall_Desc, entranceHallNeighbors);
+		corridor.makeRoom(corridorName, corridor_Desc, corridorNeighbors);
+		kitchen.makeRoom(kitchenName, kitchen_Desc, kitchenNeighbors);
+		armory.makeRoom(armoryName, armory_Desc, armoryNeighbors);
+		ballroom.makeRoom(ballroomName, ballroom_Desc, ballroomNeighbors);
+		smithy.makeRoom(smithyName, smithy_Desc, smithyNeighbors);
+		lookout.makeRoom(lookoutName, lookout_Desc, lookoutNeighbors);
+		dungeon.makeRoom(dungeonName, dungeon_Desc, dungeonNeighbors);
+
+
+		//for some reason this works
+		std::unordered_map<std::string, std::string> map = dungeon.getNeighbours();
+		for (auto i = map.begin(); i != map.end(); i++) {
+			std::cout << i->first << " : " << i->second << "\n";
+		}
+
+		//but this doesn't ???
+		/*for (auto i = corridor.getNeighbours().begin(); i != corridor.getNeighbours().end(); i++) {
+			std::cout << i->first << " : " << i->second << "\n";
+		}*/
+
+	}
+
+	void makeItems() {
+		std::string cheeseName = "Cheese";
+		std::string cheeseRoom = "Kitchen";
+		std::string cheeseUseRoom = "Armory";
+		std::string cheesePickupDesc = "You picked up the Cheese";
+		std::string cheeseUseDesc = "You give the cheese to the mouse. He grabs it and runs off knocking some items from a nearby shelf. You notice a key fall from the shelf.";
+		cheese.makeItem(cheeseName, cheeseRoom, cheeseUseRoom, cheesePickupDesc, cheeseUseDesc);
+
+		std::string keyName = "Key";
+		std::string keyRoom = "Armory";
+		std::string keyUseRoom = "Dungeon";
+		std::string keyPickupDesc = "You picked up the Key";
+		std::string keyUseDesc = "Congratulations! You escaped from the spooky castle. Will you brave the castle once more and play again?";
+
+		key.makeItem(keyName, keyRoom, keyUseRoom, keyPickupDesc, keyUseDesc);
+	}
+
+	void start() {
+		std::string input = "start";
+		std::cout << input << "\n";
+		//loop while input != quit
+		//while (input.compare("quit") != 0) {
+		//	std::cin >> input;
+		//	std::cout << input << "\n";
+		//}
+		std::unordered_map<std::string, std::string> umap;
+		umap["north"] = "lookout";
+		umap["east"] = "dungeon";
+		umap["south"] = "armory";
+		umap["west"] = "smithy";
+
+		std::cout << getDirectionString(umap) << "\n";
+
+	}
+
+	std::string getDirectionString(std::unordered_map<std::string, std::string> umap) {
+
+		//no map insertion order retention so ordering is needed
+		std::map<int, std::string> dirMap;
+
+		for (auto i = umap.begin(); i != umap.end(); i++) {
+			std::string first = i->first;
+			std::string second = i->second;
+			if (first.compare("north") == 0) {
+				dirMap[1] = first;
+			}
+			if (first.compare("east") == 0) {
+				dirMap[2] = first;
+			}
+			if (first.compare("south") == 0) {
+				dirMap[3] = first;
+			}
+			if (first.compare("west") == 0) {
+				dirMap[4] = first;
+			}
+		}
+
+		std::string directionString;
+		for (auto i = dirMap.begin(); i != dirMap.end(); i++) {
+			directionString += i->second + ", ";
+		}
+		//remove the last 2 characters from string
+		//std::cout << directionString.substr(0, directionString.size() - 2) << "\n";
+		return directionString.substr(0, directionString.size() - 2);
+	}
+
+};
+
+
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	//Test test;
+	Controller1 controller;
+
+    //controller.my_new_function("foo");
+    return 0;
 
 }
 

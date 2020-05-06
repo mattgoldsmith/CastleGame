@@ -5,6 +5,9 @@
 #include <iostream>
 #include <unordered_map>
 #include <map>
+#include <algorithm>
+#include <cctype>
+#include <string>
 
 //using namespace std;
 
@@ -30,8 +33,8 @@ public:
 		return description;
 	}
 
-	std::unordered_map<std::string, std::string> getNeighbours() {
-		return neighbours;
+	std::unordered_map<std::string, std::string>* getNeighbours() {
+		return &neighbours;
 	}
 
 };
@@ -104,7 +107,7 @@ private:
 	Item cheese;
 	Item key;
 public:
-	
+
 	Controller1() {
 		makeRooms();
 		makeItems();
@@ -130,7 +133,7 @@ public:
 		std::string smithy_Desc = "In the smithy, you find multiple tools for forging armor. There appears to be a small mouse running around.";
 		std::string lookout_Desc = "You find a large open window, perfect for spotting an attack. You can see a beautiful mountain range, with a river running towards the castle.";
 		std::string dungeon_Desc = "You travel down a spiral stone staircase to a dank and gloomy dungeon. You can see some light shining through the cracks of a locked door.";
-		
+
 		std::unordered_map<std::string, std::string> entranceHallNeighbors{
 			{"North","Corridor"}
 		};
@@ -171,18 +174,6 @@ public:
 		lookout.makeRoom(lookoutName, lookout_Desc, lookoutNeighbors);
 		dungeon.makeRoom(dungeonName, dungeon_Desc, dungeonNeighbors);
 
-
-		//for some reason this works
-		std::unordered_map<std::string, std::string> map = dungeon.getNeighbours();
-		for (auto i = map.begin(); i != map.end(); i++) {
-			std::cout << i->first << " : " << i->second << "\n";
-		}
-
-		//but this doesn't ???
-		/*for (auto i = corridor.getNeighbours().begin(); i != corridor.getNeighbours().end(); i++) {
-			std::cout << i->first << " : " << i->second << "\n";
-		}*/
-
 	}
 
 	void makeItems() {
@@ -210,24 +201,32 @@ public:
 		//	std::cin >> input;
 		//	std::cout << input << "\n";
 		//}
-		std::unordered_map<std::string, std::string> umap;
+		std::unordered_map<std::string, std::string> umap{
+			{"west","smithy2"}
+		};
 		umap["north"] = "lookout";
 		umap["east"] = "dungeon";
 		umap["south"] = "armory";
-		umap["west"] = "smithy";
+		//umap["west"] = "smithy";
 
-		std::cout << getDirectionString(umap) << "\n";
+		std::cout << getDirectionString(&umap) << "\n";
 
 	}
 
-	std::string getDirectionString(std::unordered_map<std::string, std::string> umap) {
+	std::string getDirectionString(std::unordered_map<std::string, std::string>* pumap) {
+
+		std::unordered_map<std::string, std::string> umap = *pumap;
 
 		//no map insertion order retention so ordering is needed
 		std::map<int, std::string> dirMap;
 
 		for (auto i = umap.begin(); i != umap.end(); i++) {
-			std::string first = i->first;
-			std::string second = i->second;
+			std::string first = i->first;   //direction
+			std::string second = i->second; //room
+
+			//convert to lower case
+			first = lower(first);
+
 			if (first.compare("north") == 0) {
 				dirMap[1] = first;
 			}
@@ -241,14 +240,25 @@ public:
 				dirMap[4] = first;
 			}
 		}
-
+		//grammar check
 		std::string directionString;
+		if (dirMap.size() > 1) {
+			directionString = "Available directions are ";
+		}
+		else {
+			directionString = "Available direction is ";
+		}
+
 		for (auto i = dirMap.begin(); i != dirMap.end(); i++) {
 			directionString += i->second + ", ";
 		}
 		//remove the last 2 characters from string
-		//std::cout << directionString.substr(0, directionString.size() - 2) << "\n";
 		return directionString.substr(0, directionString.size() - 2);
+	}
+	std::string lower(std::string string) {
+		std::transform(string.begin(), string.end(), string.begin(),
+			[](unsigned char c) { return std::tolower(c); });
+		return string;
 	}
 
 };

@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
+#include <sstream>  
 
 //using namespace std;
 
@@ -106,6 +107,15 @@ private:
 	//Item objects
 	Item cheese;
 	Item key;
+
+	//Current room string
+	std::string currentRoom;
+
+	//List of rooms
+	std::list<Room> rooms;
+
+	//List of Items
+	std::list<Item> items;
 public:
 
 	Controller1() {
@@ -174,6 +184,15 @@ public:
 		lookout.makeRoom(lookoutName, lookout_Desc, lookoutNeighbors);
 		dungeon.makeRoom(dungeonName, dungeon_Desc, dungeonNeighbors);
 
+		rooms.push_back(entranceHall);
+		rooms.push_back(corridor);
+		rooms.push_back(kitchen);
+		rooms.push_back(armory);
+		rooms.push_back(ballroom);
+		rooms.push_back(smithy);
+		rooms.push_back(lookout);
+		rooms.push_back(dungeon);
+
 	}
 
 	void makeItems() {
@@ -194,23 +213,34 @@ public:
 	}
 
 	void start() {
+		currentRoom = "Entrance Hall";
 		std::string input = "start";
 		std::cout << input << "\n";
 		//loop while input != quit
-		//while (input.compare("quit") != 0) {
-		//	std::cin >> input;
-		//	std::cout << input << "\n";
-		//}
-		std::unordered_map<std::string, std::string> umap{
-			{"west","smithy2"}
-		};
-		umap["north"] = "lookout";
-		umap["east"] = "dungeon";
-		umap["south"] = "armory";
-		//umap["west"] = "smithy";
+		while (input.compare("quit") != 0) {
+			std::cin >> input;
+			input = lower(input);
+			//TODO: Possibly change this to array so specific element can be accessed
+			std::list<std::string> words = splitInput(input);
+			
+			if (words.front().compare("move") == 0) {
+				move("north");
+				std::cout << currentRoom << "\n";
+			}
+		}
+	}
 
-		std::cout << getDirectionString(&umap) << "\n";
+	std::list<std::string> splitInput(std::string str) {
+		std::list<std::string> words; 
+		std::istringstream ss(str);
 
+		do {
+			std::string word;
+			ss >> word;
+			words.push_back(word);
+		} while (ss);
+
+		return words;
 	}
 
 	std::string getDirectionString(std::unordered_map<std::string, std::string>* pumap) {
@@ -255,10 +285,30 @@ public:
 		//remove the last 2 characters from string
 		return directionString.substr(0, directionString.size() - 2);
 	}
+
 	std::string lower(std::string string) {
 		std::transform(string.begin(), string.end(), string.begin(),
 			[](unsigned char c) { return std::tolower(c); });
 		return string;
+	}
+
+	void move(std::string direction) {
+		bool breakOut = false; //
+		for (Room room : rooms) {
+			if (room.getName().compare(currentRoom) == 0) {
+				std::unordered_map<std::string, std::string> neighbours = *room.getNeighbours();
+				for (auto i = neighbours.begin(); i != neighbours.end(); i++) {
+					if (direction.compare(lower(i->first)) == 0) {
+						currentRoom = i->second;
+						breakOut = true;
+						break;
+					}
+				}
+			}
+			if (breakOut) {
+				break;
+			}
+		}
 	}
 
 };

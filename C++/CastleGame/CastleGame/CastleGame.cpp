@@ -9,6 +9,7 @@
 #include <cctype>
 #include <string>
 #include <sstream>  
+#include <set>
 
 //using namespace std;
 
@@ -116,6 +117,14 @@ private:
 
 	//List of Items
 	std::list<Item> items;
+
+	//List of directions
+	std::set<std::string> directions{
+		{"north"},
+		{"east"},
+		{"south"},
+		{"west"}
+	};
 public:
 
 	Controller1() {
@@ -214,18 +223,20 @@ public:
 
 	void start() {
 		currentRoom = "Entrance Hall";
-		std::string input = "start";
-		std::cout << input << "\n";
+		std::string input = "";
+		std::cout << getRoomDescription() << "\n";
+		std::cout << getDirectionString() << "\n";
 		//loop while input != quit
 		while (input.compare("quit") != 0) {
 			std::cin >> input;
 			input = lower(input);
-			//TODO: Possibly change this to array so specific element can be accessed
 			std::list<std::string> words = splitInput(input);
-			
-			if (words.front().compare("move") == 0) {
-				move("north");
+
+			if (directions.find(words.front()) != directions.end()) {
+				move(getElement(1, words));
 				std::cout << currentRoom << "\n";
+				std::cout << getRoomDescription() << "\n";
+				std::cout << getDirectionString() << "\n";
 			}
 		}
 	}
@@ -243,9 +254,14 @@ public:
 		return words;
 	}
 
-	std::string getDirectionString(std::unordered_map<std::string, std::string>* pumap) {
+	std::string getDirectionString() {
 
-		std::unordered_map<std::string, std::string> umap = *pumap;
+		std::unordered_map<std::string, std::string> umap;
+		for (Room room : rooms) {
+			if (room.getName().compare(currentRoom) == 0) {
+				umap = *room.getNeighbours();
+			}
+		}
 
 		//no map insertion order retention so ordering is needed
 		std::map<int, std::string> dirMap;
@@ -257,6 +273,7 @@ public:
 			//convert to lower case
 			first = lower(first);
 
+			//order the directions
 			if (first.compare("north") == 0) {
 				dirMap[1] = first;
 			}
@@ -311,6 +328,27 @@ public:
 		}
 	}
 
+	std::string getRoomDescription() {
+		std::string desc;
+		for (Room room : rooms) {
+			if (room.getName().compare(currentRoom) == 0) {
+				desc = room.getDescription();
+			}
+		}
+		return desc;
+	}
+
+	std::string getElement(int e, std::list<std::string> l) {
+		std::string element = "false";
+		int i = 1;
+		for(std::string s : l) {
+			if (e == i) {
+				element = s;
+				break;
+			}
+		}
+		return element;
+	}
 };
 
 

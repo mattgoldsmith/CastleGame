@@ -219,6 +219,9 @@ public:
 		std::string keyUseDesc = "Congratulations! You escaped from the spooky castle. Will you brave the castle once more and play again?";
 
 		key.makeItem(keyName, keyRoom, keyUseRoom, keyPickupDesc, keyUseDesc);
+
+		items.push_back(cheese);
+		items.push_back(key);
 	}
 
 	void start() {
@@ -237,6 +240,19 @@ public:
 				std::cout << currentRoom << "\n";
 				std::cout << getRoomDescription() << "\n";
 				std::cout << getDirectionString() << "\n";
+			}
+			else if (words.front().compare("take")) {
+				std::string second = getElement(2, words);
+				for (Item item : items) {
+					//TODO: take item functionality
+					if (item.getName().compare(second) == 0 && item.getRoom().compare(currentRoom) == 0) {
+						//take item
+					}
+				}
+				std::cout << "take item" << "\n";
+			}
+			else if (words.front().compare("use")) {
+				std::cout << "use item" << "\n";
 			}
 		}
 	}

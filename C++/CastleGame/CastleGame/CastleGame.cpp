@@ -118,6 +118,9 @@ private:
 	//List of Items
 	std::list<Item> items;
 
+	//Bag
+	std::list<std::string> bag;
+
 	//List of directions
 	std::set<std::string> directions{
 		{"north"},
@@ -226,12 +229,12 @@ public:
 
 	void start() {
 		currentRoom = "Entrance Hall";
-		std::string input = "";
+		std::string input;
 		std::cout << getRoomDescription() << "\n";
 		std::cout << getDirectionString() << "\n";
 		//loop while input != quit
 		while (input.compare("quit") != 0) {
-			std::cin >> input;
+			std::getline(std::cin, input);
 			input = lower(input);
 			std::list<std::string> words = splitInput(input);
 
@@ -241,18 +244,24 @@ public:
 				std::cout << getRoomDescription() << "\n";
 				std::cout << getDirectionString() << "\n";
 			}
-			else if (words.front().compare("take")) {
+			else if (words.front().compare("take") == 0) {
 				std::string second = getElement(2, words);
 				for (Item item : items) {
 					//TODO: take item functionality
-					if (item.getName().compare(second) == 0 && item.getRoom().compare(currentRoom) == 0) {
+					if (lower(item.getName()).compare(second) == 0 && item.getRoom().compare(currentRoom) == 0) {
 						//take item
+						bag.push_back(item.getName());
+						std::cout << "take item" << "\n";
 					}
 				}
-				std::cout << "take item" << "\n";
 			}
-			else if (words.front().compare("use")) {
+			else if (words.front().compare("use") == 0) {
 				std::cout << "use item" << "\n";
+			}
+			else if (words.front().compare("bag") == 0) {
+				//print contents of bag
+				std::cout << getBagContents() << "\n";
+
 			}
 		}
 	}
@@ -362,8 +371,26 @@ public:
 				element = s;
 				break;
 			}
+			i++;
 		}
 		return element;
+	}
+
+	std::string getBagContents() {
+		std::string contents;
+		std::string items;
+
+		for (std::string item : bag) {
+			items += item + ", ";
+		}
+
+		if (bag.size() > 0) {
+			contents = "The bag contains: " + items.substr(0, items.size() - 2);;
+		}
+		else {
+			contents = "The bag is empty";
+		}
+		return contents;
 	}
 };
 

@@ -51,7 +51,7 @@ private:
 	std::string useRoom;
 	std::string pickupDesc;
 	std::string useDesc;
-	bool used;
+	bool taken{false}; //initialise to false
 public:
 	//No constructor so the object can be a field instantiated from a method.
 	void makeItem(std::string name, std::string room, std::string useRoom, std::string pickupDesc, std::string useDesc) {
@@ -60,7 +60,6 @@ public:
 		this->useRoom = useRoom;
 		this->pickupDesc = pickupDesc;
 		this->useDesc = useDesc;
-		used = false;
 	}
 
 	std::string getName() {
@@ -83,11 +82,11 @@ public:
 		return useDesc;
 	}
 
-	void setUsed(bool used) {
-		this->used = used;
+	void setTaken(bool taken) {
+		this->taken = taken;
 	}
-	bool getUsed() {
-		return used;
+	bool getTaken() {
+		return taken;
 	}
 };
 
@@ -246,13 +245,24 @@ public:
 			}
 			else if (words.front().compare("take") == 0) {
 				std::string second = getElement(2, words);
-				for (Item item : items) {
-					//TODO: take item functionality
+				bool item_exists = false;
+				for (Item &item : items) { //use pointer to update field rather than creating new variable copy (&item)
 					if (lower(item.getName()).compare(second) == 0 && item.getRoom().compare(currentRoom) == 0) {
-						//take item
-						bag.push_back(item.getName());
-						std::cout << "take item" << "\n";
+						item_exists = true;
+						if (item.getTaken() == false) {
+							//take item
+							bag.push_back(item.getName());
+							std::cout << "the " + item.getName() + " was put into the bag" << "\n";
+							item.setTaken(true);
+						}
+						else {
+							std::cout << "Already Taken!\n";
+						}
 					}
+				}
+				if (!item_exists) {
+					//error message
+					std::cout << "That item doesn't exist!\n";
 				}
 			}
 			else if (words.front().compare("use") == 0) {

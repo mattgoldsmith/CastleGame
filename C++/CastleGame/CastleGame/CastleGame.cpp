@@ -236,6 +236,7 @@ public:
 			std::getline(std::cin, input);
 			input = lower(input);
 			std::list<std::string> words = splitInput(input);
+			std::string second = getElement(2, words);
 
 			if (directions.find(words.front()) != directions.end()) {
 				move(getElement(1, words));
@@ -244,7 +245,6 @@ public:
 				std::cout << getDirectionString() << "\n";
 			}
 			else if (words.front().compare("take") == 0) {
-				std::string second = getElement(2, words);
 				bool item_exists = false;
 				for (Item &item : items) { //use pointer to update field rather than creating new variable copy (&item)
 					if (lower(item.getName()).compare(second) == 0 && item.getRoom().compare(currentRoom) == 0) {
@@ -266,6 +266,13 @@ public:
 				}
 			}
 			else if (words.front().compare("use") == 0) {
+				if (std::find(std::begin(bag), std::end(bag), second) != std::end(bag)) { //TODO:make this case insensitive
+					//TODO:add functionality to use the item
+				}
+				else {
+					std::cout << "You do not have this item\n";
+				}
+
 				std::cout << "use item" << "\n";
 			}
 			else if (words.front().compare("bag") == 0) {

@@ -127,6 +127,9 @@ private:
 		{"south"},
 		{"west"}
 	};
+
+	//Input
+	std::string input;
 public:
 
 	Controller1() {
@@ -209,13 +212,13 @@ public:
 	void makeItems() {
 		std::string cheeseName = "Cheese";
 		std::string cheeseRoom = "Kitchen";
-		std::string cheeseUseRoom = "Armory";
+		std::string cheeseUseRoom = "Smithy";
 		std::string cheesePickupDesc = "You picked up the Cheese";
 		std::string cheeseUseDesc = "You give the cheese to the mouse. He grabs it and runs off knocking some items from a nearby shelf. You notice a key fall from the shelf.";
 		cheese.makeItem(cheeseName, cheeseRoom, cheeseUseRoom, cheesePickupDesc, cheeseUseDesc);
 
 		std::string keyName = "Key";
-		std::string keyRoom = "Armory";
+		std::string keyRoom = "Smithy";
 		std::string keyUseRoom = "Dungeon";
 		std::string keyPickupDesc = "You picked up the Key";
 		std::string keyUseDesc = "Congratulations! You escaped from the spooky castle. Will you brave the castle once more and play again?";
@@ -228,11 +231,11 @@ public:
 
 	void start() {
 		currentRoom = "Entrance Hall";
-		std::string input;
 		std::cout << getRoomDescription() << "\n";
 		std::cout << getDirectionString() << "\n";
 		//loop while input != quit
 		while (input.compare("quit") != 0) {
+			std::cout << "----------\n";
 			std::getline(std::cin, input);
 			input = lower(input);
 			std::list<std::string> words = splitInput(input);
@@ -240,9 +243,15 @@ public:
 
 			if (directions.find(words.front()) != directions.end()) {
 				move(getElement(1, words));
-				std::cout << currentRoom << "\n";
-				std::cout << getRoomDescription() << "\n";
-				std::cout << getDirectionString() << "\n";
+			}
+			else if (words.front().compare("go") == 0) {
+				if (directions.find(second) != directions.end()) {
+					move(second);
+				}
+				else {
+					std::cout << "Please enter a valid direction\n";
+					std::cout << getDirectionString() << "\n";
+				}
 			}
 			else if (words.front().compare("take") == 0) {
 				bool item_exists = false;
@@ -266,14 +275,28 @@ public:
 				}
 			}
 			else if (words.front().compare("use") == 0) {
-				if (std::find(std::begin(bag), std::end(bag), second) != std::end(bag)) { //TODO:make this case insensitive
-					//TODO:add functionality to use the item
+				//if (std::find(std::begin(bag), std::end(bag), second) != std::end(bag)) { //TODO:make this case insensitive
+				bool inBag{ false };
+				for (std::string item : bag) {
+					if (lower(item).compare(second) == 0) {
+						inBag = true;
+					}
+				}
+				
+				if(inBag) {
+					for (Item item : items) {
+						if (lower(item.getName()).compare(second) == 0 && item.getUseRoom().compare(currentRoom) == 0)  {
+							useItem(second);
+						}
+						else if (lower(item.getName()).compare(second) == 0 && item.getUseRoom().compare(currentRoom) != 0) {
+							std::cout << "This isn't the time to use that!\n";
+						}
+					}
 				}
 				else {
 					std::cout << "You do not have this item\n";
 				}
 
-				std::cout << "use item" << "\n";
 			}
 			else if (words.front().compare("bag") == 0) {
 				//print contents of bag
@@ -360,6 +383,7 @@ public:
 					if (direction.compare(lower(i->first)) == 0) {
 						currentRoom = i->second;
 						breakOut = true;
+						std::cout << getRoomDescription() << "\n";
 						break;
 					}
 				}
@@ -368,6 +392,10 @@ public:
 				break;
 			}
 		}
+		if (!breakOut) {
+			std::cout << "You cannot go that way\n";
+		}
+		std::cout << getDirectionString() << "\n";
 	}
 
 	std::string getRoomDescription() {
@@ -408,6 +436,34 @@ public:
 			contents = "The bag is empty";
 		}
 		return contents;
+	}
+
+	bool checkItemMatch(const std::string& inBag, const std::string& toCheck)
+	{
+		auto it = std::search(
+			inBag.begin(), inBag.end(),
+			toCheck.begin(), toCheck.end(),
+			[](char ch1, char ch2) { return std::toupper(ch1) == std::toupper(ch2); }
+		);
+		return (it != inBag.end());
+	}
+
+	void useItem(std::string useItem) {
+		std::list<std::string> newBag;
+		for (std::string item : bag) {
+			if (lower(item) != lower(useItem)) {
+				newBag.push_back(item);
+			}
+		}
+		bag = newBag;
+
+		if (lower(useItem) == "cheese") {
+			std::cout << "You give the cheese to the mouse. He grabs it and runs off knocking some items from a nearby shelf. You notice a key fall from the shelf.\n";
+		}
+		if (lower(useItem) == "key") {
+			std::cout << "Congratulations! You escaped from the spooky castle. Will you brave the castle once more and play again?\n";
+			input = "quit";
+		}
 	}
 };
 
